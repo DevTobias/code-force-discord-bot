@@ -1,9 +1,11 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable no-console */
 
 // Import dependencies
 require('dotenv').config();
 const ytdl = require('ytdl-core');
 const { google } = require('googleapis');
+const { prefix } = require('../config.json');
 
 const youtubeV3 = google.youtube({ version: 'v3', auth: process.env.GOOGLE_AUTH });
 
@@ -41,9 +43,26 @@ module.exports = {
 
       const arg = args.slice(1).join(' ');
 
+      // If argument is a link
       if (arg.includes('www')) {
+        // If argument is a playlist link
+        if (arg.includes('playlist')) {
+          const playlistID = arg.slice(arg.indexOf('list=') + 5, arg.length);
+          const data = await this.getPlaylistItems(playlistID);
+
+          const nMessage = message;
+          for (let i = 0; i < data.Items.length; i += 1) {
+            nMessage.content = `${prefix}play https://www.youtube.com/watch?v=${data.Items[i].snippet.resourceId.videoId}`;
+            await this.execute(nMessage);
+          }
+          return null;
+        }
+
+        // If argument is a single video
         songInfo = await ytdl.getInfo(arg);
         ytTitle = songInfo.videoDetails.title;
+
+      // If argument is a name to search
       } else {
         const data = await this.getUrl(arg);
         songInfo = await ytdl.getInfo(`https://www.youtube.com/watch?v=${data.videoID}`);
@@ -150,6 +169,24 @@ module.exports = {
         resolve({
           videoID: response.data.items[0].id.videoId,
           title: response.data.items[0].snippet.title,
+        });
+      });
+    });
+  },
+
+  getPlaylistItems(query) {
+    return new Promise((resolve) => {
+      youtubeV3.playlistItems.list({
+        part: [
+          'id',
+          'snippet',
+        ],
+        playlistId: query,
+        maxResult: 10,
+      }, (err, response) => {
+        if (err) throw err;
+        resolve({
+          Items: response.data.items,
         });
       });
     });

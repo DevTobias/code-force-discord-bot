@@ -1,6 +1,6 @@
 module.exports = {
   name: 'nowplaying',
-  description: 'Get the song that is playing.',
+  description: 'Get the song that is currently playing.',
   execute(message) {
     // Get queue from the server which requested
     const serverQueue = message.client.queue.get(message.guild.id);
