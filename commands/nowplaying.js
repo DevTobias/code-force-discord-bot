@@ -11,6 +11,6 @@ module.exports = {
     }
 
     // Send the songtilte which is currently playing
-    return message.channel.send(`Now playing: **${serverQueue.songs[0].title}**`);
+    return message.channel.send(`Now playing: **${serverQueue.songs[0].title} - ${serverQueue.songs[0].artist}**`);
   },
 };
