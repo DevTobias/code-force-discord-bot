@@ -5,12 +5,12 @@
 require('dotenv').config();
 const ytdl = require('ytdl-core');
 const { google } = require('googleapis');
-const { prefix } = require('../config.json');
+const { prefix } = require('../../config.json');
 
 const youtubeV3 = google.youtube({ version: 'v3', auth: process.env.GOOGLE_AUTH });
 
 module.exports = {
-  name: 'play',
+  name: 'play <URL/query/playlist>',
   description: 'Play a song in your voice channel!',
 
   async execute(message) {

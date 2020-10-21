@@ -14,11 +14,14 @@ const { prefix, token } = require('./config.json');
 const client = new Client();
 client.commands = new Discord.Collection();
 
-// Get all *.js files in commands and requiere it
-const commandFileNames = fs.readdirSync('./commands').filter((file) => file.endsWith('.js'));
-for (let i = 0; i < commandFileNames.length; i += 1) {
-  const command = require(`./commands/${commandFileNames[i]}`);
-  client.commands.set(command.name, command);
+// Get all *.js files in the command directory
+const commandDicts = fs.readdirSync('./commands');
+for (let i = 0; i < commandDicts.length; i += 1) {
+  const commandFileNames = fs.readdirSync(`./commands/${commandDicts[i]}/`).filter((file) => file.endsWith('.js'));
+  for (let j = 0; j < commandFileNames.length; j += 1) {
+    const command = require(`./commands/${commandDicts[i]}/${commandFileNames[j]}`);
+    client.commands.set(command.name, command);
+  }
 }
 
 // Discord basic events

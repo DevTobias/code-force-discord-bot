@@ -1,4 +1,4 @@
-// import { getLyrics } from 'genius-lyrics-api';
+// Import dependencies
 const { getLyrics } = require('genius-lyrics-api');
 
 const options = {
